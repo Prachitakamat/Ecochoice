@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Choice</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: #f7f5dc;
+            color: #4a6b3b;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #2b4c27;
+            padding: 1.5rem 2% 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        nav {
+            display: flex;
+            gap: 3rem;
+        }
+
+        nav a {
+            color: #f7f5dc;
+            text-decoration: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        .logo-img {
+            max-height: 150px;
+            width: auto;
+            margin-left: auto;
+            object-fit: contain;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-view {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        #home,
+        .page-view:target {
+            display: none;
+        }
+
+        body:not(:has(:target)) #home,
+        #home:target {
+            display: flex;
+        }
+
+        #products:target {
+            display: flex;
+        }
+
+        #about:target {
+            display: flex;
+        }
+
+        body:not(:has(:target)) nav a[href="#home"],
+        body:has(#home:target) nav a[href="#home"],
+        body:has(#products:target) nav a[href="#products"],
+        body:has(#about:target) nav a[href="#about"] {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+
+        #home {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .hero-image-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .search-btn-container {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .search-btn {
+            background-color: #4a6b3b;
+            color: #f7f5dc;
+            border: none;
+            padding: 0.9rem 2.5rem;
+            font-size: 1.2rem;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 30px !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s, transform 0.2s;
+            text-decoration: none;
+        }
+
+        .search-btn:hover {
+            background-color: #38532c;
+            transform: scale(1.02);
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            stroke: #f7f5dc;
+            stroke-width: 2.5;
+            fill: none;
+        }
+
+
+        #products {
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 2rem;
+            overflow-y: auto;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 340px);
+            gap: 3.5rem 3rem;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+        }
+
+        .category-box {
+            position: relative;
+            width: 340px;
+            height: 340px;
+            overflow: hidden;
+            background-color: #d8dabf;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .category-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-height: 85%;
+            overflow-y: auto;
+            background-color: rgba(74, 107, 59, 0.95);
+            padding: 0.75rem 0;
+            text-align: center;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-menu a {
+            display: block;
+            color: #f7f5dc;
+            text-decoration: none;
+            padding: 0.6rem 0.5rem;
+            font-size: 1.05rem;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #38532c;
+        }
+
+        .dropdown-menu a.all-products-link {
+            font-weight: bold;
+            border-bottom: 1px solid rgba(247, 245, 220, 0.3);
+            margin-bottom: 0.25rem;
+            padding-bottom: 0.65rem;
+        }
+
+        .category-box:hover .dropdown-menu {
+            display: block;
+        }
+
+        .empty-page {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        .empty-page h1 {
+            font-size: 2.5rem;
+            color: #4a6b3b;
+        }
+
+
+        /* ABOUT US PAGE*/
+
+        #about {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        #about:target {
+            display: block;
+        }
+
+        .about-page {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #f7f5dc;
+            scroll-behavior: smooth;
+        }
+
+        .about-hero {
+            width: 100%;
+            min-height: 420px;
+            background: #f7f5dc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .about-hero-img {
+            width: 100%;
+            height: auto;
+            max-height: 1000px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .about-section {
+            width: min(1180px, 92%);
+            margin: 0 auto;
+            padding: 5rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4.5rem;
+            align-items: center;
+        }
+
+        .about-discover {
+            border-bottom: 1px solid rgba(74, 107, 59, 0.2);
+        }
+
+        .about-mission {
+            padding-top: 5rem;
+        }
+
+        .about-text {
+            color: #294d36;
+        }
+
+        .about-eyebrow {
+            display: inline-block;
+            margin-bottom: 0.8rem;
+            color: #718c4e;
+            font-size: 0.8rem;
+            font-family: Arial, sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+        }
+
+        .about-text h1 {
+            color: #244c39;
+            font-size: clamp(2.4rem, 4vw, 4rem);
+            line-height: 1.05;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .about-text h1 em {
+            font-family: "Brush Script MT", "Segoe Script", cursive;
+            font-weight: 400;
+            color: #496d3d;
+        }
+
+        .about-lead {
+            color: #425745;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .about-step {
+            border-left: 3px solid #8ca66a;
+            padding: 0.2rem 0 0.8rem 1.2rem;
+            margin: 1.3rem 0;
+        }
+
+        .about-step h2 {
+            color: #496d3d;
+            font-size: 1.35rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .about-step p,
+        .about-mission .about-text > p {
+            color: #3f4d40;
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            line-height: 1.75;
+        }
+
+        .about-mission .about-text > p {
+            margin-bottom: 1.25rem;
+        }
+
+        .about-image-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .about-section-img {
+            width: 100%;
+            max-width: 560px;
+            height: auto;
+            display: block;
+            border-radius: 18px;
+            
+        }
+
+        .about-highlight {
+            margin-top: 2rem;
+            padding: 1.3rem 1.5rem;
+            background: #e7e8cf;
+            border-radius: 14px;
+            border: 1px solid rgba(74, 107, 59, 0.18);
+        }
+
+        .about-highlight span {
+            display: block;
+            color: #718c4e;
+            font-family: Arial, sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+
+        .about-highlight strong {
+            color: #294d36;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .about-closing {
+            text-align: center;
+            padding: 5rem 1.5rem 6rem;
+            background: #e8ead5;
+        }
+
+        .about-closing h2 {
+            color: #294d36;
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+        }
+
+        .about-closing p {
+            color: #49624c;
+            font-family: Arial, sans-serif;
+            font-size: 1.05rem;
+        }
+
+        @media (max-width: 800px) {
+            .about-section {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                padding: 3.5rem 0;
+            }
+
+            .about-mission .about-image-wrap {
+                order: 2;
+            }
+
+            .about-mission .about-text {
+                order: 1;
+            }
+
+            .about-hero {
+                min-height: 0;
+            }
+
+            .about-hero-img {
+                max-height: none;
+            }
+
+            .about-text h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .category-grid {
+                grid-template-columns: repeat(2, 340px);
+                gap: 2.5rem;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .category-grid {
+                grid-template-columns: repeat(1, 340px);
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .logo-img {
+                max-height: 70px;
+                margin-left: 0;
+            }
+
+            .search-btn-container {
+                bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#products">Products</a>
+            <a href="#about">About us</a>
+        </nav>
+
+        <a href="#about">
+        <img src="{{ url_for('static', filename='ecochoicelogo.png') }}" alt="Eco Choice Logo" class="logo-img">
+        </a>
+    </header>
+
+    <!--home-->
+    <main>
+
+        <div id="home" class="page-view">
+            <div class="hero-image-container">
+                <img src="{{ url_for('static', filename='bgimage1.png') }}" alt="Eco Choice Banner" class="hero-img">
+            </div>
+
+
+            <div class="search-btn-container">
+                <a href="#products" class="search-btn">
+                    <svg class="search-icon" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Search Products
+                </a>
+            </div>
+        </div>
+
+        <!--products-->
+        <div id="products" class="page-view">
+            <div class="category-grid">
+
+                <!-- laundry -->
+                <div class="category-box" id="laundry">
+                    <img src="{{ url_for('static', filename='laundry.png') }}" alt="laundry" class="category-img">
+                    <div class="dropdown-menu">
+                        <a href="#" class="all-products-link" data-name="All products">All Products</a>
+                        <a href="#" data-name="Detergents">Detergents & Washes</a>
+                        <a href="#" data-name="Fabric Softeners">Fabric Softeners</a>
+                        <a href="#" data-name="Stain Removers">Stain Removers</a>
+                    </div>
+                </div>
+
+                <!-- cleaning -->
+                <div class="category-box" id="cleaning">
+                    <img src="{{ url_for('static', filename='cleaning.png') }}" alt="cleaning" class="category-img">
+                    <div class="dropdown-menu">
+                        <a href="#" class="all-products-link" data-name="All products">All Products</a>
+                        <a href="#" data-name="Surface Cleaners">Surface Cleaners</a>
+                        <a href="#" data-name="Dish care">Dishwashing</a>
+                        <a href="#" data-name="Bathroom">Bathroom</a>
+                    </div>
+                </div>
+
+                <!-- household -->
+                <div class="category-box" id="misc_household">
+                    <img src="{{ url_for('static', filename='household.png') }}" alt="misc_household" class="category-img">
+                    <div class="dropdown-menu">
+                        <a href="#" class="all-products-link" data-name="All products">All Products</a>
+                        <a href="#" data-name="Paper Products">Paper Products</a>
+                        <a href="#" data-name="Air Care">Air Care</a>
+                    </div>
+                </div>
+
+                <!-- stationery -->
+                <div class="category-box" id="stationery">
+                    <img src="{{ url_for('static', filename='stationery.png') }}" alt="stationery" class="category-img">
+                    <div class="dropdown-menu">
+                        <a href="#" class="all-products-link" data-name="All products">All Products</a>
+                        <a href="#" data-name="Writing Essentials">Writing Essentials</a>
+                        <a href="#" data-name="Paper">Paper & Notebooks</a>
+                        <a href="#" data-name="Arts and Crafts">Art & Craft Supplies</a>
+                        <a href="#" data-name="Office Basics">Office Tools</a>
+                    </div>
+                </div>
+
+                <!-- selfcare -->
+                <div class="category-box" id="self_care">
+                    <img src="{{ url_for('static', filename='selfcare.png') }}" alt="self_care" class="category-img">
+                    <div class="dropdown-menu">
+                        <a href="#" class="all-products-link" data-name="All products">All Products</a>
+                        <a href="#" data-name="Skincare">Skincare & Sun Care</a>
+                        <a href="#" data-name="Haircare">Haircare</a>
+                        <a href="#" data-name="Bath and Body">Bath & Body</a>
+                        <a href="#" data-name="Oral Hygiene">Oral Care</a>
+                    </div>
+                </div>
+
+                <!-- health -->
+                <div class="category-box" id="health">
+                    <img src="{{ url_for('static', filename='health.png') }}" alt="health" class="category-img">
+                    <div class="dropdown-menu">
+                        <a href="#" class="all-products-link" data-name="All products">All Products</a>
+                        <a href="#" data-name="First Aid">First Aid Essentials</a>
+                        <a href="#" data-name="Health monitoring">Health Monitoring</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- about us -->
+        <div id="about" class="page-view about-page">
+
+            <!-- Section 1: Hero -->
+            <section class="about-hero">
+                <img
+                    src="{{ url_for('static', filename='pic3.jpeg') }}"
+                    alt="Small swaps, big impact - EcoChoice"
+                    class="about-hero-img"
+                >
+            </section>
+
+            <!-- Section 2: Discover, Compare, Choose -->
+            <section class="about-section about-discover">
+                <div class="about-text">
+                    <span class="about-eyebrow">THE ECOCHOICE IDEA</span>
+                    <h1>Discover. Compare. Choose.</h1>
+                    <p class="about-lead">
+                        Everything you need to make better choices, in one place.
+                    </p>
+
+                    <div class="about-step">
+                        <h2>Discover</h2>
+                        <p>
+                            Find eco-conscious and sustainable alternatives to products
+                            that are already in your cart.
+                        </p>
+                    </div>
+
+                    <div class="about-step">
+                        <h2>Compare</h2>
+                        <p>
+                            Compare them by certifications, impact, prices and more.
+                        </p>
+                    </div>
+
+                    <div class="about-step">
+                        <h2>Choose</h2>
+                        <p>
+                            Choose your product with confidence, by understanding why
+                            something is a better option.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="about-image-wrap">
+                    <img
+                        src="{{ url_for('static', filename='pic2.jpeg') }}"
+                        alt="Discover, compare and choose sustainable products"
+                        class="about-section-img"
+                    >
+                </div>
+            </section>
+
+            <!-- Section 3: What EcoChoice does -->
+            <section class="about-section about-mission">
+                <div class="about-image-wrap">
+                    <img
+                        src="{{ url_for('static', filename='pic1.jpeg') }}"
+                        alt="EcoChoice sustainable shopping"
+                        class="about-section-img"
+                    >
+                </div>
+
+                <div class="about-text">
+                    <span class="about-eyebrow">WHAT WE DO</span>
+                    <h1>Smarter choices,<br><em>kinder planet.</em></h1>
+
+                    <p>
+                        EcoChoice brings together everyday products- cleaning and
+                        laundry supplies, self-care, stationary, household items and
+                        more, along with legitimate information that helps you evaluate
+                        them, such as: materials, packaging, certifications and
+                        environmental impact.
+                    </p>
+
+                    <p>
+                        EcoChoice aims to assist everyday, regular consumers in making
+                        shopping decisions that are kinder to the environment and help
+                        preserve its beauty.
+                    </p>
+
+                    <p>
+                        Small everyday swaps add up over time and we firmly believe in
+                        making this process more accessible and practical.
+                    </p>
+
+                    <div class="about-highlight">
+                        <span>Our goal</span>
+                        <strong>Simpler, more transparent shopping, one product at a time.</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Closing statement -->
+            <section class="about-closing">
+                <h2>That's the whole idea behind EcoChoice.</h2>
+                <p>
+                    Simpler, more transparent shopping, one product at a time.
+                </p>
+            </section>
+
+        </div>
+    </main>
+
+
+
+<script>
+    const gridContainer=document.querySelector(".category-grid");
+    gridContainer.addEventListener('click', (e) =>{
+    e.preventDefault();
+
+    if(e.target.hasAttribute('data-name')){
+    const selectedProduct=e.target;
+    const selectedCategory=selectedProduct.closest('.category-box')
+    const product=selectedProduct.dataset.name;
+    const category=selectedCategory.id;
+
+    fetch('/selected-product', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+    product_name: product,
+    category_name: category
+    })
+    })
+    .then(res => res.json())
+    .then(data => {
+    if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+    }
+    })
+    .catch(err => console.error("Error:", err));
+    }});
+
+
+
+</script>
+
+</body>
+</html>
